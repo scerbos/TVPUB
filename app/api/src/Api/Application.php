@@ -25,7 +25,7 @@ class Application extends Slim
       return $config;
     }
 
-    protected function dbConfig()
+    protected function dbConn($queryString)
     {
       //Create Database connection
       $db = mysqli_connect("localhost","employees","employees","employees");
@@ -36,23 +36,11 @@ class Application extends Slim
       }
     
       //Replace * in the query with the column names.
-      $result = $db->query("select * from employee");  
-      
-      //Create an array
-      $json_response = array();
+      $result = $db->query($queryString);
       
       while ($row = $result->fetch_array(MYSQL_ASSOC)) {
-          $row_array['id_employee'] = $row['id_employee'];
-          $row_array['emp_name'] = $row['emp_name'];
-          $row_array['designation'] = $row['designation'];
-          $row_array['date_joined'] = $row['date_joined'];
-          $row_array['salary'] = $row['salary'];
-          $row_array['id_dept'] = $row['id_dept'];
-          
-          //push the values in the array
-          array_push($json_response,$row_array);
+          $json_response[] = $row;
       }
-      // echo json_encode($json_response);
       
       //Close the database connection
       $result->close();
@@ -98,7 +86,7 @@ class Application extends Slim
 
       // /test
       $this->get('/api/employees', function () {
-        $employees = $this->dbConfig();
+        $employees = $this->dbConn("select * from employee");
         $this->response->headers->set('Content-Type', 'application/json');
         $this->response->setBody($employees);
       });
