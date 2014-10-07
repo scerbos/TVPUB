@@ -28,6 +28,13 @@ angular.module('tvpubApp')
       $scope.awesomeThings = allFeatures;
     });
 
+    var Employees = $resource('api/employees/:employeeId', {employeeId:'@id'}, {});
+
+    var allEmployees = Employees.query(function() {
+      $scope.loading = false;
+      console.log(allEmployees);
+    });
+
     // Get awesome things list
     // $http({method: 'GET', url: '/api/features'}).
 
