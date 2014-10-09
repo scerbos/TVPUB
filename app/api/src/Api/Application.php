@@ -171,9 +171,9 @@ class Application extends Slim
         $this->post('/api/employees', function () {
             $this->dbConnect();
             $body = $this->request->getBody();
-            $this->dbInsert("employee", $body);
+            $newEmployee = $this->dbInsert("employee", $body);
 
-            $newEmployee = $this->response->headers->set('Content-Type', 'application/json');
+            $this->response->headers->set('Content-Type', 'application/json');
             $this->response->setBody($newEmployee);
             $this->dbClose();
         });
@@ -182,20 +182,20 @@ class Application extends Slim
             $this->dbConnect();
             $body = $this->request->getBody();
             $id = mysqli_real_escape_string($this->dbConn, $id);
-            $this->dbUpdate("employee", $body, "id_employee = '$id'");
+            $updatedEmployee = $this->dbUpdate("employee", $body, "id_employee = '$id'");
 
-            $newEmployee = $this->response->headers->set('Content-Type', 'application/json');
-            $this->response->setBody($newEmployee);
+            $this->response->headers->set('Content-Type', 'application/json');
+            $this->response->setBody($updatedEmployee);
             $this->dbClose();
         });
 
         $this->delete('/api/employees/:id', function ($id) {
             $this->dbConnect();
             $id = mysqli_real_escape_string($this->dbConn, $id);
-            $this->dbDelete("employee", "id_employee = '$id'");
+            $deletedEmployee = $this->dbDelete("employee", "id_employee = '$id'");
 
-            $newEmployee = $this->response->headers->set('Content-Type', 'application/json');
-            $this->response->setBody($newEmployee);
+            $this->response->headers->set('Content-Type', 'application/json');
+            $this->response->setBody($deletedEmployee);
             $this->dbClose();
         });
     }
