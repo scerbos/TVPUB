@@ -23,6 +23,7 @@ class Features
             $features[] = array(
                 'id' => $id,
                 'name' => $feature['name'],
+                'desc' => $feature['description'],
                 'href' => $this->getHref($id),
             );
         }

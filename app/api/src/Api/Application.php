@@ -11,6 +11,8 @@ class Application extends Slim
 {
     public $configDirectory;
     public $config;
+    public $connection;
+    public $dbConn;
 
     protected function initConfig()
     {
@@ -22,6 +24,95 @@ class Application extends Slim
             $config = array_replace_recursive($config, include $this->configDirectory . '/' . $filename);
         }
         return $config;
+    }
+
+    protected function dbConnect()
+    {
+        $dbData = $this->config['dbData'];
+
+        $this->dbConn = mysqli_connect($dbData['host'], $dbData['username'], $dbData['password'], $dbData['database']);
+
+        if ($this->dbConn->connect_error) {
+            die('Error : ('. $this->dbConn->connect_errno .') '. $this->dbConn->connect_error);
+        }
+    }
+
+    protected function dbSelect($queryString, $array = false)
+    {
+        //Replace * in the query with the column names.
+        $result = $this->dbConn->query($queryString);
+
+        if ($array) {
+            while ($row = $result->fetch_array(MYSQL_ASSOC)) {
+                $json_response[] = $row;
+            }
+        } else {
+            $json_response = $result->fetch_assoc();
+        }
+
+        $result->close();
+
+        return json_encode($json_response);
+    }
+
+    protected function dbInsert($table, $record)
+    {
+        $keys = array();
+        $values = array();
+        foreach (json_decode($record, true) as $key => $value) {
+            $keys[] = mysqli_real_escape_string($this->dbConn, $key);
+            $values[] = "'" . mysqli_real_escape_string($this->dbConn, $value) . "'";
+        }
+
+        $insert = 'INSERT INTO '. $table . ' (' . implode(",", $keys) . ') '
+            . 'VALUES ( ' . implode(",", $values) . ' )';
+
+        $insertRow = $this->dbConn->query($insert);
+
+        if ($insertRow) {
+            return 'Success! ID of last inserted record is : ' . $this->dbConn->insert_id .'<br />';
+        } else {
+            die ('Error : (' . $this->dbConn->errno . ') ' . $this->dbConn->error);
+        }
+    }
+
+    protected function dbUpdate($table, $record, $selector)
+    {
+        $values = array();
+        foreach (json_decode($record, true) as $key => $value) {
+            $values[] = mysqli_real_escape_string($this->dbConn, $key) . "='"
+                . mysqli_real_escape_string($this->dbConn, $value) . "'";
+        }
+
+        $update = 'UPDATE '. $table . ' SET ' . implode(",", $values) . ' WHERE ' . $selector;
+
+        //MySqli Query
+        $updateRow = $this->dbConn->query($update);
+
+        if ($updateRow) {
+            return 'Success! record updated';
+        } else {
+            die ('Error : (' . $this->dbConn->errno . ') ' . $this->dbConn->error);
+        }
+    }
+
+    protected function dbDelete($table, $selector)
+    {
+        $delete = 'DELETE FROM ' . $table . ' WHERE ' . $selector;
+
+        //MySqli Query
+        $deleteRow = $this->dbConn->query($delete);
+
+        if ($deleteRow) {
+            return 'Success! record deleted';
+        } else {
+            die ('Error : (' . $this->dbConn->errno . ') ' . $this->dbConn->error);
+        }
+    }
+
+    protected function dbClose()
+    {
+        $this->dbConn->close();
     }
 
     public function __construct(array $userSettings = array(), $configDirectory = 'config')
@@ -55,6 +146,57 @@ class Application extends Slim
             }
             $this->response->headers->set('Content-Type', 'application/json');
             $this->response->setBody(json_encode($feature));
+        });
+
+        // /test
+        $this->get('/api/employees', function () {
+            $this->dbConnect();
+            $employees = $this->dbSelect("SELECT * from employee", true);
+
+            $this->response->headers->set('Content-Type', 'application/json');
+            $this->response->setBody($employees);
+            $this->dbClose();
+        });
+
+        $this->get('/api/employees/:id', function ($id) {
+            $this->dbConnect();
+            $id = mysqli_real_escape_string($this->dbConn, $id);
+            $employees = $this->dbSelect("SELECT * from employee WHERE id_employee = '$id'");
+
+            $this->response->headers->set('Content-Type', 'application/json');
+            $this->response->setBody($employees);
+            $this->dbClose();
+        });
+
+        $this->post('/api/employees', function () {
+            $this->dbConnect();
+            $body = $this->request->getBody();
+            $newEmployee = $this->dbInsert("employee", $body);
+
+            $this->response->headers->set('Content-Type', 'application/json');
+            $this->response->setBody($newEmployee);
+            $this->dbClose();
+        });
+
+        $this->put('/api/employees/:id', function ($id) {
+            $this->dbConnect();
+            $body = $this->request->getBody();
+            $id = mysqli_real_escape_string($this->dbConn, $id);
+            $updatedEmployee = $this->dbUpdate("employee", $body, "id_employee = '$id'");
+
+            $this->response->headers->set('Content-Type', 'application/json');
+            $this->response->setBody($updatedEmployee);
+            $this->dbClose();
+        });
+
+        $this->delete('/api/employees/:id', function ($id) {
+            $this->dbConnect();
+            $id = mysqli_real_escape_string($this->dbConn, $id);
+            $deletedEmployee = $this->dbDelete("employee", "id_employee = '$id'");
+
+            $this->response->headers->set('Content-Type', 'application/json');
+            $this->response->setBody($deletedEmployee);
+            $this->dbClose();
         });
     }
 
