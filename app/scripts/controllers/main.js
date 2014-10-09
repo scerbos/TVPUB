@@ -28,12 +28,26 @@ angular.module('tvpubApp')
       $scope.awesomeThings = allFeatures;
     });
 
-    var Employees = $resource('api/employees/:employeeId', {employeeId:'@id'}, {});
+    var Employee = $resource('api/employees/:employeeId', {employeeId:'@id'}, {'update': { method:'PUT' }});
 
-    var allEmployees = Employees.query(function() {
+    var allEmployees = Employee.query(function() {
       $scope.loading = false;
-      console.log(allEmployees);
     });
+
+    var oneEmployee = Employee.get({employeeId:1}, function() {});
+
+    $scope.addEmployee = function() {
+      var newEmployee = new Employee({id_employee:11, emp_name:'REEVES', designation:'CLERK', date_joined:'2014-12-17', salary:3500.00, id_dept:35});
+      newEmployee.$save();
+    };
+
+    $scope.updateEmployee = function() {
+      Employee.update({employeeId:11}, {emp_name:'REAVES'});
+    };
+
+    $scope.deleteEmployee = function() {
+      Employee.delete({employeeId:11}, function() {});
+    };
 
     // Get awesome things list
     // $http({method: 'GET', url: '/api/features'}).
