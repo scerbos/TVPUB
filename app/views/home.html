@@ -7,7 +7,7 @@
                 <img src="images/smiley.png" width="50%" height="50%" alt="..." class="img-thumbnail">
             </div>
         <div class="col-md-8">
-            <h3>Welcome, username!</h3>
+            <h3>Welcome, {{getCurrentUser.first_name}}!</h3>
         </div>
         
         </div>
@@ -39,7 +39,7 @@
         </div>
 
         <div class="row marketing">
-            <h4>Recently Watched</h4>
+            <h4>My Shows</h4>
         
             <div ng-repeat="tvshow in recentlyWatched">
                 <p ng-if="tvshow.loading">Loading...</p>
@@ -48,8 +48,8 @@
                         <img src="images/yeoman.png" alt="...">
                         <div class="caption">
                             <h5 ng-if="tvshow.name">{{tvshow.name}}</h5>
-                            <p ng-if="tvshow.description">{{tvshow.description}}</p>
-                            <p><a href="#" class="btn btn-primary" role="button">+</a> <a href="#" class="btn btn-default" role="button">...</a></p>
+                            <p ng-if="tvshow.overview">{{tvshow.overview}}</p>
+                            <p><button href="#" class="btn btn-primary" role="button" ng-click="removeSeries(tvshow.id)">-</button> <a href="#" class="btn btn-default" role="button">...</a></p>
                         </div>
                     </div>
                 </div>

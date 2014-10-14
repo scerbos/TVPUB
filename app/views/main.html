@@ -23,7 +23,7 @@
         <div class="caption">
           <h4 ng-if="tvshow.name">{{tvshow.name}}</h4>
           <p ng-if="tvshow.overview">{{tvshow.overview}}</p>
-          <p><button class="btn btn-default" role="button" ng-click="addSeries(tvshow.id)">+</button></p>
+          <p ng-show="isLoggedIn"><button class="btn btn-default" role="button" ng-click="addSeries(tvshow.id)">+</button></p>
         </div>
       </div>
     </div>

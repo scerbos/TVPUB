@@ -31,6 +31,7 @@ angular.module('tvpubApp')
     // };
 
     var Series = $resource('api/series/:seriesId', {seriesId:'@id'});
+    var Queue = $resource('api/user/:uid/series/:sid', {uid:'@id', sid:'@id'});
 
     $scope.user = {};
     $scope.errors = {};
@@ -76,23 +77,20 @@ angular.module('tvpubApp')
 
     $scope.test = ''
 
-    Auth.getCurrentUser( function(user) {
-      $scope.test = user;
-
-      console.log(Auth.isLoggedIn());
-      Auth.isLoggedIn();
-    }, function() {
-      $scope.test = 'fail';
-      Auth.isLoggedIn();
-    });
+    $scope.isLoggedIn = Auth.isLoggedIn;
 
     $scope.searchResults = Series.query(function() {
       $scope.loading = false;
     });
 
-    $scope.addSeries = function(id) {
-      console.log('add');
-    }
+    $scope.addSeries = function(sid) {
+      Auth.getCurrentUser(function(user) {
+        $scope.getCurrentUser = user;
+
+        var newQueue = new Queue({user_id:user.id, series_id:sid});
+        newQueue.$save();
+      });
+    };
 
     $scope.searched = true;
 
