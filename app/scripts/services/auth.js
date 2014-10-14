@@ -47,22 +47,10 @@ angular.module('tvpubApp')
        *
        * @param  {Function}
        */
-      logout: function(callback) {
-        var cb = callback || angular.noop;
-        var deferred = $q.defer();
+      logout: function() {
         currentUser = {}
 
-        $http.post('api/auth/logout').
-        success(function(data) {
-          deferred.resolve(data);
-          return cb();
-        }).
-        error(function(err) {
-          deferred.reject(err);
-          return cb(err);
-        }.bind(this));
-
-        return deferred.promise;
+        $http.post('api/auth/logout');
       },
 
       /**
