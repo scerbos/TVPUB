@@ -25,9 +25,21 @@ angular
       })
       .when('/about', {
         templateUrl: 'views/about.html',
-        controller: 'AboutCtrl'
+        controller: 'AboutCtrl',
+        authenticate: true
       })
       .otherwise({
         redirectTo: '/'
       });
+  })
+  .run(function ($rootScope, $location, Auth) {
+    // Redirect to login if route requires auth and you're not logged in
+    $rootScope.$on('$routeChangeStart', function (event, next) {
+
+      Auth.isLoggedInAsync(function(loggedIn) {
+        if (next.authenticate && !loggedIn) {
+          $location.path('/');
+        }
+      });
+    });
   });
