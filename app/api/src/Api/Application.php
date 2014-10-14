@@ -224,23 +224,32 @@ class Application extends Slim
             $this->response->setBody('Logged Out!');
         });
 
-        // /test
-        $this->get('/api/employees', function () {
+        // /series
+        $this->get('/api/user/:id/shows', function () {
             $this->dbConnect();
-            $employees = $this->dbSelect("SELECT * from employee", true);
+            $shows = $this->dbSelect("SELECT * FROM Series s WHERE NOT EXISTS (SELECT * FROM Users u WHERE NOT EXISTS (SELECT * FROM user_to_series us WHERE us.user_id = u.id AND us.series_id = s.id))", true);
 
             $this->response->headers->set('Content-Type', 'application/json');
-            $this->response->setBody($employees);
+            $this->response->setBody($shows);
             $this->dbClose();
         });
 
-        $this->get('/api/employees/:id', function ($id) {
+        $this->get('/api/series', function () {
             $this->dbConnect();
-            $id = mysqli_real_escape_string($this->dbConn, $id);
-            $employees = $this->dbSelect("SELECT * from employee WHERE id_employee = '$id'");
+            $shows = $this->dbSelect("SELECT * from series", true);
 
             $this->response->headers->set('Content-Type', 'application/json');
-            $this->response->setBody($employees);
+            $this->response->setBody($shows);
+            $this->dbClose();
+        });
+
+        $this->get('/api/series/:id', function ($id) {
+            $this->dbConnect();
+            $id = mysqli_real_escape_string($this->dbConn, $id);
+            $shows = $this->dbSelect("SELECT * from series WHERE id = '$id'", true);
+
+            $this->response->headers->set('Content-Type', 'application/json');
+            $this->response->setBody($shows);
             $this->dbClose();
         });
 

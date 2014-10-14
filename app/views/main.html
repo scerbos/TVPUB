@@ -19,11 +19,11 @@
     <p ng-if="tvshow.loading">Loading...</p>
     <div class="col-sm-6 col-md-4">
       <div class="thumbnail">
-        <img src="{{tvshow.image}}" alt="...">
+        <img src="images/animated-television.gif" alt="...">
         <div class="caption">
           <h4 ng-if="tvshow.name">{{tvshow.name}}</h4>
-          <p ng-if="tvshow.description">{{tvshow.description}}</p>
-          <p><a href="#" class="btn btn-default" role="button">...</a></p>
+          <p ng-if="tvshow.overview">{{tvshow.overview}}</p>
+          <p><button class="btn btn-default" role="button" ng-click="addSeries(tvshow.id)">+</button></p>
         </div>
       </div>
     </div>

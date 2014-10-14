@@ -29,7 +29,8 @@ angular
       })
       .when('/home', {
         templateUrl: 'views/home.html',
-        controller: 'HomeCtrl'
+        controller: 'HomeCtrl',
+        authenticate: true
       })
       .when('/viewShow', {
         templateUrl: 'views/viewshow.html',
