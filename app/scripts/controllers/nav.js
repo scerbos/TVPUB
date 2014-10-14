@@ -12,7 +12,12 @@ angular.module('tvpubApp')
     $scope.isCollapsed = true;
     $scope.isLoggedIn = Auth.isLoggedIn;
     $scope.isAdmin = false; //Auth.isAdmin();
-    $scope.getCurrentUser = Auth.getCurrentUser();
+    
+    Auth.getCurrentUser(function(user) {
+      $scope.getCurrentUser = user;
+    }, function() {
+      $scope.getCurrentUser = '';
+    });
 
     $scope.logout = function() {
       Auth.logout();
