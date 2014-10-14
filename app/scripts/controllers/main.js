@@ -8,7 +8,7 @@
  * Controller of the tvpubApp
  */
 angular.module('tvpubApp')
-  .controller('MainCtrl', function ($scope, $http, $resource) {
+  .controller('MainCtrl', function ($scope, Auth, $resource) {
 
     function createUnknownError(status) {
       return {
@@ -49,6 +49,59 @@ angular.module('tvpubApp')
       Employee.delete({employeeId:11}, function() {});
     };
 
+    $scope.user = {};
+    $scope.errors = {};
+    $scope.submitted = false;
+
+    $scope.register = function(form) {
+      $scope.submitted = true;
+
+      console.log('submitting');
+
+      if(form.$valid) {
+        console.log('creating user');
+        Auth.createUser({
+          email: $scope.user.email,
+          password: $scope.user.password
+        })
+        .catch( function(err) {
+          err = err.data;
+          console.log(err.description);
+        });
+      }
+    };
+
+    $scope.logout = function() {
+      Auth.logout();
+    };
+
+    $scope.login = function(form) {
+      $scope.submitted = true;
+
+      if(form.$valid) {
+        Auth.login({
+          email: $scope.user.email,
+          password: $scope.user.password
+        })
+        .catch( function(err) {
+          $scope.errors.other = err.message;
+        });
+      }
+    };
+
+    
+
+    $scope.test = ''
+
+    Auth.getCurrentUser( function(user) {
+      $scope.test = user;
+
+      console.log(Auth.isLoggedIn());
+      Auth.isLoggedIn();
+    }, function() {
+      $scope.test = 'fail';
+      Auth.isLoggedIn();
+    });
     // Get awesome things list
     // $http({method: 'GET', url: '/api/features'}).
 

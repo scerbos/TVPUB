@@ -4,6 +4,8 @@ namespace Api;
 
 use Api\Model\Features;
 use \Slim\Slim;
+use Illuminate\Database\Capsule\Manager as Capsule;
+use Cartalyst\Sentry\Facades\Native\Sentry as Sentry;
 use \Exception;
 
 // TODO Move all "features" things to a class with index() and get() methods
@@ -16,6 +18,22 @@ class Application extends Slim
 
     protected function initConfig()
     {
+
+        // Create a new Database connection
+        $capsule = new Capsule;
+
+        $capsule->addConnection([
+            'driver'    => 'mysql',
+            'host'      => 'localhost',
+            'database'  => 'employees',
+            'username'  => 'employees',
+            'password'  => 'employees',
+            'charset'   => 'utf8',
+            'collation' => 'utf8_unicode_ci',
+        ]);
+
+        $capsule->bootEloquent();
+
         $config = array();
         if (!file_exists($this->configDirectory) || !is_dir($this->configDirectory)) {
             throw new Exception('Config directory is missing: ' . $this->configDirectory, 500);
@@ -146,6 +164,80 @@ class Application extends Slim
             }
             $this->response->headers->set('Content-Type', 'application/json');
             $this->response->setBody(json_encode($feature));
+        });
+
+        // /users
+        $this->post('/api/users', function () {
+            $data = json_decode($this->request->getBody());
+
+            try {
+                // Create the user
+                $user = Sentry::createUser(array(
+                    'email'     => $data->{'email'},
+                    'password'  => $data->{'password'},
+                    'activated' => true,
+                ));
+
+                // Log the user in
+                Sentry::login($user, false);
+
+                $res = json_encode($user);
+            } catch (Cartalyst\Sentry\Users\LoginRequiredException $e) {
+                $res = 'Login field is required.';
+            } catch (Cartalyst\Sentry\Users\PasswordRequiredException $e) {
+                $res = 'Password field is required.';
+            } catch (Cartalyst\Sentry\Users\UserExistsException $e) {
+                $res = 'User with this login already exists.';
+            }
+
+            $this->response->headers->set('Content-Type', 'application/json');
+            $this->response->setBody($res);
+        });
+
+        $this->get('/api/users/me', function () {
+            if (! Sentry::check()) {
+                $this->response->setStatus(401);
+            } else {
+                $this->response->headers->set('Content-Type', 'application/json');
+                $this->response->setBody(json_encode(Sentry::getUser()));
+            }
+        });
+
+        // /auth
+        $this->post('/api/auth/login', function () {
+            $data = json_decode($this->request->getBody());
+
+            try {
+            // Login credentials
+                $credentials = array(
+                    'email'     => $data->{'email'},
+                    'password'  => $data->{'password'},
+                );
+
+                // Authenticate the user
+                $user = Sentry::authenticate($credentials, true);
+                $res = json_encode($user);
+            } catch (Cartalyst\Sentry\Users\LoginRequiredException $e) {
+                $res = 'Login field is required.';
+            } catch (Cartalyst\Sentry\Users\PasswordRequiredException $e) {
+                $res = 'Password field is required.';
+            } catch (Cartalyst\Sentry\Users\WrongPasswordException $e) {
+                $res = 'Wrong password, try again.';
+            } catch (Cartalyst\Sentry\Users\UserNotFoundException $e) {
+                $res = 'User was not found.';
+            } catch (Cartalyst\Sentry\Users\UserNotActivatedException $e) {
+                $res = 'User is not activated.';
+            }
+
+            $this->response->headers->set('Content-Type', 'application/json');
+            $this->response->setBody($res);
+        });
+
+        $this->post('/api/auth/logout', function () {
+            Sentry::logout();
+
+            $this->response->headers->set('Content-Type', 'application/json');
+            $this->response->setBody('Logged Out!');
         });
 
         // /test
