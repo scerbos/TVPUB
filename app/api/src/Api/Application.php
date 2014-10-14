@@ -149,23 +149,6 @@ class Application extends Slim
         $this->configDirectory = __DIR__ . '/../../' . $configDirectory;
         $this->config = $this->initConfig();
 
-        // /features
-        $this->get('/api/features', function () {
-            $features = new Features($this->config['features']);
-            $this->response->headers->set('Content-Type', 'application/json');
-            $this->response->setBody(json_encode($features->getFeatures()));
-        });
-
-        $this->get('/api/features/:id', function ($id) {
-            $features = new Features($this->config['features']);
-            $feature = $features->getFeature($id);
-            if ($feature === null) {
-                return $this->notFound();
-            }
-            $this->response->headers->set('Content-Type', 'application/json');
-            $this->response->setBody(json_encode($feature));
-        });
-
         // /users
         $this->post('/api/users', function () {
             $data = json_decode($this->request->getBody());
