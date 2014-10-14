@@ -1,253 +1,437 @@
-SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0;
-SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
-SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='TRADITIONAL,ALLOW_INVALID_DATES';
+-- phpMyAdmin SQL Dump
+-- version 4.2.7.1
+-- http://www.phpmyadmin.net
+--
+-- Host: localhost
+-- Generation Time: Oct 14, 2014 at 10:31 AM
+-- Server version: 5.6.20
+-- PHP Version: 5.5.15
 
-CREATE SCHEMA IF NOT EXISTS `tvpub` DEFAULT CHARACTER SET latin1 COLLATE latin1_swedish_ci ;
-USE `tvpub` ;
-
--- -----------------------------------------------------
--- Table `tvpub`.`user`
--- -----------------------------------------------------
-CREATE  TABLE IF NOT EXISTS `tvpub`.`user` (
-  `id` INT NOT NULL AUTO_INCREMENT ,
-  `username` VARCHAR(255) NOT NULL ,
-  `name` VARCHAR(255) NOT NULL ,
-  `email` VARCHAR(45) NOT NULL ,
-  `hash` TEXT NOT NULL ,
-  `picture` VARCHAR(255) NULL ,
-  `salt` TEXT NOT NULL ,
-  `role` VARCHAR(45) NOT NULL ,
-  PRIMARY KEY (`id`) ,
-  UNIQUE INDEX `id_UNIQUE` (`id` ASC) ,
-  UNIQUE INDEX `email_UNIQUE` (`email` ASC) ,
-  UNIQUE INDEX `username_UNIQUE` (`username` ASC) )
-ENGINE = InnoDB;
+SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
+SET time_zone = "+00:00";
 
 
--- -----------------------------------------------------
--- Table `tvpub`.`series`
--- -----------------------------------------------------
-CREATE  TABLE IF NOT EXISTS `tvpub`.`series` (
-  `id` INT NOT NULL ,
-  `air_day` DATE NULL ,
-  `air_time` TIME NULL ,
-  `IMDB_ID` INT NULL ,
-  `network` VARCHAR(45) NULL ,
-  `overview` TEXT NULL ,
-  `rating_tvdb` DECIMAL(8) NULL ,
-  `runtime` INT NULL ,
-  `name` VARCHAR(255) NULL ,
-  `status` VARCHAR(45) NULL ,
-  `banner` VARCHAR(255) NULL ,
-  `fanart` VARCHAR(255) NULL ,
-  `poster` VARCHAR(255) NULL ,
-  PRIMARY KEY (`id`) ,
-  UNIQUE INDEX `id_UNIQUE` (`id` ASC) )
-ENGINE = InnoDB;
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!40101 SET NAMES utf8 */;
 
+--
+-- Database: `tvpub`
+--
+CREATE DATABASE IF NOT EXISTS `tvpub` DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci;
+USE `tvpub`;
 
--- -----------------------------------------------------
--- Table `tvpub`.`user_to_series`
--- -----------------------------------------------------
-CREATE  TABLE IF NOT EXISTS `tvpub`.`user_to_series` (
-  `id` INT NOT NULL AUTO_INCREMENT ,
-  `rating` DECIMAL(8) NULL ,
-  `comment` TEXT NULL ,
-  `user_id` INT NULL ,
-  `series_id` INT NULL ,
-  PRIMARY KEY (`id`) ,
-  INDEX `user_id_idx` (`user_id` ASC) ,
-  INDEX `series_id_idx` (`series_id` ASC) ,
-  CONSTRAINT `user_id`
-    FOREIGN KEY (`user_to_series_id` )
-    REFERENCES `tvpub`.`user` (`id` )
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
-  CONSTRAINT `series_to_user_id`
-    FOREIGN KEY (`series_id` )
-    REFERENCES `tvpub`.`series` (`id` )
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
-ENGINE = InnoDB;
+-- --------------------------------------------------------
 
+--
+-- Table structure for table `actor`
+--
 
--- -----------------------------------------------------
--- Table `tvpub`.`episode`
--- -----------------------------------------------------
-CREATE  TABLE IF NOT EXISTS `tvpub`.`episode` (
-  `id` INT NOT NULL ,
-  `director` VARCHAR(255) NULL ,
-  `name` VARCHAR(255) NULL ,
-  `episode_number` INT NULL ,
-  `air_date` DATE NULL ,
-  `overview` TEXT NULL ,
-  `rating_tvdb` DECIMAL(8) NULL ,
-  `season_number` INT NULL ,
-  `combined_episode_number` INT NULL ,
-  `guest_stars` TEXT NULL ,
-  `writers` TEXT NULL ,
-  PRIMARY KEY (`id`) )
-ENGINE = InnoDB;
+CREATE TABLE IF NOT EXISTS `actor` (
+`id` int(11) NOT NULL,
+  `name` varchar(255) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 
+-- --------------------------------------------------------
 
--- -----------------------------------------------------
--- Table `tvpub`.`series_to_episode`
--- -----------------------------------------------------
-CREATE  TABLE IF NOT EXISTS `tvpub`.`series_to_episode` (
-  `id` INT NOT NULL AUTO_INCREMENT ,
-  `series_id` INT NULL ,
-  `episode_id` INT NULL ,
-  PRIMARY KEY (`id`) ,
-  INDEX `series_id_idx` (`series_id` ASC) ,
-  INDEX `episode_id_idx` (`episode_id` ASC) ,
-  CONSTRAINT `series_to_episode_id`
-    FOREIGN KEY (`series_id` )
-    REFERENCES `tvpub`.`series` (`id` )
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
-  CONSTRAINT `episode_to_series_id`
-    FOREIGN KEY (`episode_id` )
-    REFERENCES `tvpub`.`episode` (`id` )
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
-ENGINE = InnoDB;
+--
+-- Table structure for table `episode`
+--
 
+CREATE TABLE IF NOT EXISTS `episode` (
+  `id` int(11) NOT NULL,
+  `director` varchar(255) DEFAULT NULL,
+  `name` varchar(255) DEFAULT NULL,
+  `episode_number` int(11) DEFAULT NULL,
+  `air_date` date DEFAULT NULL,
+  `overview` text,
+  `rating_tvdb` decimal(8,0) DEFAULT NULL,
+  `season_number` int(11) DEFAULT NULL,
+  `combined_episode_number` int(11) DEFAULT NULL,
+  `guest_stars` text,
+  `writers` text
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
--- -----------------------------------------------------
--- Table `tvpub`.`actor`
--- -----------------------------------------------------
-CREATE  TABLE IF NOT EXISTS `tvpub`.`actor` (
-  `id` INT NOT NULL AUTO_INCREMENT ,
-  `name` VARCHAR(255) NOT NULL ,
-  PRIMARY KEY (`id`) )
-ENGINE = InnoDB;
+-- --------------------------------------------------------
 
+--
+-- Table structure for table `genre`
+--
 
--- -----------------------------------------------------
--- Table `tvpub`.`series_to_actor`
--- -----------------------------------------------------
-CREATE  TABLE IF NOT EXISTS `tvpub`.`series_to_actor` (
-  `id` INT NOT NULL AUTO_INCREMENT ,
-  `actor_id` INT NULL ,
-  `series_id` INT NULL ,
-  PRIMARY KEY (`id`) ,
-  INDEX `actor_id_idx` (`actor_id` ASC) ,
-  INDEX `series_id_idx` (`series_id` ASC) ,
-  CONSTRAINT `actor_to_series_id`
-    FOREIGN KEY (`actor_id` )
-    REFERENCES `tvpub`.`actor` (`id` )
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
-  CONSTRAINT `series_to_actor_id`
-    FOREIGN KEY (`series_id` )
-    REFERENCES `tvpub`.`series` (`id` )
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
-ENGINE = InnoDB;
+CREATE TABLE IF NOT EXISTS `genre` (
+`id` int(11) NOT NULL,
+  `genre` varchar(255) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 
+-- --------------------------------------------------------
 
--- -----------------------------------------------------
--- Table `tvpub`.`genre`
--- -----------------------------------------------------
-CREATE  TABLE IF NOT EXISTS `tvpub`.`genre` (
-  `id` INT NOT NULL AUTO_INCREMENT ,
-  `genre` VARCHAR(255) NOT NULL ,
-  PRIMARY KEY (`id`) )
-ENGINE = InnoDB;
+--
+-- Table structure for table `genre_to_series`
+--
 
+CREATE TABLE IF NOT EXISTS `genre_to_series` (
+`id` int(11) NOT NULL,
+  `genre_id` int(11) DEFAULT NULL,
+  `series_id` int(11) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 
--- -----------------------------------------------------
--- Table `tvpub`.`genre_to_series`
--- -----------------------------------------------------
-CREATE  TABLE IF NOT EXISTS `tvpub`.`genre_to_series` (
-  `id` INT NOT NULL AUTO_INCREMENT ,
-  `genre_id` INT NULL ,
-  `series_id` INT NULL ,
-  PRIMARY KEY (`id`) ,
-  INDEX `genre_id_idx` (`genre_id` ASC) ,
-  INDEX `series_id_idx` (`series_id` ASC) ,
-  CONSTRAINT `genre_to_series_id`
-    FOREIGN KEY (`genre_id` )
-    REFERENCES `tvpub`.`genre` (`id` )
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
-  CONSTRAINT `series_to_genre_id`
-    FOREIGN KEY (`series_id` )
-    REFERENCES `tvpub`.`series` (`id` )
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
-ENGINE = InnoDB;
+-- --------------------------------------------------------
 
+--
+-- Table structure for table `groups`
+--
 
--- -----------------------------------------------------
--- Table `tvpub`.`user_to_user`
--- -----------------------------------------------------
-CREATE  TABLE IF NOT EXISTS `tvpub`.`user_to_user` (
-  `id` INT NOT NULL AUTO_INCREMENT ,
-  `order` INT NULL ,
-  `circle` VARCHAR(255) NULL ,
-  `user1_id` INT NULL ,
-  `user2_id` INT NULL ,
-  PRIMARY KEY (`id`) ,
-  INDEX `user1_id_idx` (`user1_id` ASC) ,
-  INDEX `user_id_idx` (`user2_id` ASC) ,
-  CONSTRAINT `user1_to_user2_id`
-    FOREIGN KEY (`user1_id` )
-    REFERENCES `tvpub`.`user` (`id` )
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
-  CONSTRAINT `user2_to_user1_id`
-    FOREIGN KEY (`user2_id` )
-    REFERENCES `tvpub`.`user` (`id` )
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
-ENGINE = InnoDB;
+CREATE TABLE IF NOT EXISTS `groups` (
+`id` int(10) unsigned NOT NULL,
+  `name` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+  `permissions` text COLLATE utf8_unicode_ci,
+  `created_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `updated_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;
 
+-- --------------------------------------------------------
 
--- -----------------------------------------------------
--- Table `tvpub`.`message`
--- -----------------------------------------------------
-CREATE  TABLE IF NOT EXISTS `tvpub`.`message` (
-  `id` VARCHAR(255) NOT NULL ,
-  `sender_id` INT NOT NULL ,
-  `receiver_id` INT NOT NULL ,
-  `message` TEXT NOT NULL ,
-  `visible` TINYINT(1) NULL ,
-  `episode_id` INT NULL ,
-  `message_id` VARCHAR(255) NULL ,
-  `group_id` VARCHAR(255) NULL ,
-  `date_time` DATETIME NOT NULL ,
-  PRIMARY KEY (`id`) ,
-  UNIQUE INDEX `id_UNIQUE` (`id` ASC) ,
-  UNIQUE INDEX `group_id_UNIQUE` (`group_id` ASC) ,
-  INDEX `sender1_id_idx` (`sender_id` ASC) ,
-  INDEX `receiver_id_idx` (`receiver_id` ASC) ,
-  INDEX `message_id_idx` (`message_id` ASC) ,
-  INDEX `episode_id_idx` (`episode_id` ASC) ,
-  CONSTRAINT `sender_id`
-    FOREIGN KEY (`sender_id` )
-    REFERENCES `tvpub`.`user` (`id` )
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
-  CONSTRAINT `receiver_id`
-    FOREIGN KEY (`receiver_id` )
-    REFERENCES `tvpub`.`user` (`id` )
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
-  CONSTRAINT `message_id`
-    FOREIGN KEY (`message_id` )
-    REFERENCES `tvpub`.`message` (`id` )
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
-  CONSTRAINT `episode_id`
-    FOREIGN KEY (`episode_id` )
-    REFERENCES `tvpub`.`episode` (`id` )
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
-ENGINE = InnoDB;
+--
+-- Table structure for table `message`
+--
 
+CREATE TABLE IF NOT EXISTS `message` (
+  `id` varchar(255) NOT NULL,
+  `sender_id` int(11) NOT NULL,
+  `receiver_id` int(11) NOT NULL,
+  `message` text NOT NULL,
+  `visible` tinyint(1) DEFAULT NULL,
+  `episode_id` int(11) DEFAULT NULL,
+  `message_id` varchar(255) DEFAULT NULL,
+  `group_id` varchar(255) DEFAULT NULL,
+  `date_time` datetime NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+-- --------------------------------------------------------
 
-SET SQL_MODE=@OLD_SQL_MODE;
-SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
-SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
+--
+-- Table structure for table `migrations`
+--
+
+CREATE TABLE IF NOT EXISTS `migrations` (
+  `migration` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+  `batch` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `series`
+--
+
+CREATE TABLE IF NOT EXISTS `series` (
+  `id` int(11) NOT NULL,
+  `air_day` date DEFAULT NULL,
+  `air_time` time DEFAULT NULL,
+  `IMDB_ID` int(11) DEFAULT NULL,
+  `network` varchar(45) DEFAULT NULL,
+  `overview` text,
+  `rating_tvdb` decimal(8,0) DEFAULT NULL,
+  `runtime` int(11) DEFAULT NULL,
+  `name` varchar(255) DEFAULT NULL,
+  `status` varchar(45) DEFAULT NULL,
+  `banner` varchar(255) DEFAULT NULL,
+  `fanart` varchar(255) DEFAULT NULL,
+  `poster` varchar(255) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `series_to_actor`
+--
+
+CREATE TABLE IF NOT EXISTS `series_to_actor` (
+`id` int(11) NOT NULL,
+  `actor_id` int(11) DEFAULT NULL,
+  `series_id` int(11) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `series_to_episode`
+--
+
+CREATE TABLE IF NOT EXISTS `series_to_episode` (
+`id` int(11) NOT NULL,
+  `series_id` int(11) DEFAULT NULL,
+  `episode_id` int(11) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `throttle`
+--
+
+CREATE TABLE IF NOT EXISTS `throttle` (
+`id` int(10) unsigned NOT NULL,
+  `user_id` int(10) unsigned NOT NULL,
+  `ip_address` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `attempts` int(11) NOT NULL DEFAULT '0',
+  `suspended` tinyint(4) NOT NULL DEFAULT '0',
+  `banned` tinyint(4) NOT NULL DEFAULT '0',
+  `last_attempt_at` timestamp NULL DEFAULT NULL,
+  `suspended_at` timestamp NULL DEFAULT NULL,
+  `banned_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `user`
+--
+
+CREATE TABLE IF NOT EXISTS `user` (
+`id` int(11) NOT NULL,
+  `username` varchar(255) NOT NULL,
+  `name` varchar(255) NOT NULL,
+  `email` varchar(45) NOT NULL,
+  `hash` text NOT NULL,
+  `picture` varchar(255) DEFAULT NULL,
+  `salt` text NOT NULL,
+  `role` varchar(45) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `user_to_series`
+--
+
+CREATE TABLE IF NOT EXISTS `user_to_series` (
+`id` int(11) NOT NULL,
+  `rating` decimal(8,0) DEFAULT NULL,
+  `comment` text,
+  `user_id` int(11) DEFAULT NULL,
+  `series_id` int(11) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `user_to_user`
+--
+
+CREATE TABLE IF NOT EXISTS `user_to_user` (
+`id` int(11) NOT NULL,
+  `order` int(11) DEFAULT NULL,
+  `circle` varchar(255) DEFAULT NULL,
+  `user1_id` int(11) DEFAULT NULL,
+  `user2_id` int(11) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `users`
+--
+
+CREATE TABLE IF NOT EXISTS `users` (
+`id` int(10) unsigned NOT NULL,
+  `email` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+  `password` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+  `permissions` text COLLATE utf8_unicode_ci,
+  `activated` tinyint(4) NOT NULL DEFAULT '0',
+  `activation_code` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `activated_at` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `last_login` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `persist_code` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `reset_password_code` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `first_name` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `last_name` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `updated_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `users_groups`
+--
+
+CREATE TABLE IF NOT EXISTS `users_groups` (
+`id` int(10) unsigned NOT NULL,
+  `user_id` int(10) unsigned NOT NULL,
+  `group_id` int(10) unsigned NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;
+
+--
+-- Indexes for dumped tables
+--
+
+--
+-- Indexes for table `actor`
+--
+ALTER TABLE `actor`
+ ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `episode`
+--
+ALTER TABLE `episode`
+ ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `genre`
+--
+ALTER TABLE `genre`
+ ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `genre_to_series`
+--
+ALTER TABLE `genre_to_series`
+ ADD PRIMARY KEY (`id`), ADD KEY `genre_id_idx` (`genre_id`), ADD KEY `series_id_idx` (`series_id`);
+
+--
+-- Indexes for table `groups`
+--
+ALTER TABLE `groups`
+ ADD PRIMARY KEY (`id`), ADD UNIQUE KEY `groups_name_unique` (`name`);
+
+--
+-- Indexes for table `message`
+--
+ALTER TABLE `message`
+ ADD PRIMARY KEY (`id`), ADD UNIQUE KEY `id_UNIQUE` (`id`), ADD UNIQUE KEY `group_id_UNIQUE` (`group_id`), ADD KEY `sender1_id_idx` (`sender_id`), ADD KEY `receiver_id_idx` (`receiver_id`), ADD KEY `message_id_idx` (`message_id`), ADD KEY `episode_id_idx` (`episode_id`);
+
+--
+-- Indexes for table `series`
+--
+ALTER TABLE `series`
+ ADD PRIMARY KEY (`id`), ADD UNIQUE KEY `id_UNIQUE` (`id`);
+
+--
+-- Indexes for table `series_to_actor`
+--
+ALTER TABLE `series_to_actor`
+ ADD PRIMARY KEY (`id`), ADD KEY `actor_id_idx` (`actor_id`), ADD KEY `series_id_idx` (`series_id`);
+
+--
+-- Indexes for table `series_to_episode`
+--
+ALTER TABLE `series_to_episode`
+ ADD PRIMARY KEY (`id`), ADD KEY `series_id_idx` (`series_id`), ADD KEY `episode_id_idx` (`episode_id`);
+
+--
+-- Indexes for table `throttle`
+--
+ALTER TABLE `throttle`
+ ADD PRIMARY KEY (`id`), ADD KEY `fk_user_id` (`user_id`);
+
+--
+-- Indexes for table `user`
+--
+ALTER TABLE `user`
+ ADD PRIMARY KEY (`id`), ADD UNIQUE KEY `id_UNIQUE` (`id`), ADD UNIQUE KEY `email_UNIQUE` (`email`), ADD UNIQUE KEY `username_UNIQUE` (`username`);
+
+--
+-- Indexes for table `user_to_series`
+--
+ALTER TABLE `user_to_series`
+ ADD PRIMARY KEY (`id`), ADD KEY `user_id_idx` (`user_id`), ADD KEY `series_id_idx` (`series_id`);
+
+--
+-- Indexes for table `user_to_user`
+--
+ALTER TABLE `user_to_user`
+ ADD PRIMARY KEY (`id`), ADD KEY `user1_id_idx` (`user1_id`), ADD KEY `user_id_idx` (`user2_id`);
+
+--
+-- Indexes for table `users`
+--
+ALTER TABLE `users`
+ ADD PRIMARY KEY (`id`), ADD UNIQUE KEY `users_email_unique` (`email`), ADD KEY `users_activation_code_index` (`activation_code`), ADD KEY `users_reset_password_code_index` (`reset_password_code`);
+
+--
+-- Indexes for table `users_groups`
+--
+ALTER TABLE `users_groups`
+ ADD PRIMARY KEY (`id`);
+
+--
+-- AUTO_INCREMENT for dumped tables
+--
+
+--
+-- AUTO_INCREMENT for table `actor`
+--
+ALTER TABLE `actor`
+MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+--
+-- AUTO_INCREMENT for table `genre`
+--
+ALTER TABLE `genre`
+MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+--
+-- AUTO_INCREMENT for table `genre_to_series`
+--
+ALTER TABLE `genre_to_series`
+MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+--
+-- AUTO_INCREMENT for table `groups`
+--
+ALTER TABLE `groups`
+MODIFY `id` int(10) unsigned NOT NULL AUTO_INCREMENT;
+--
+-- AUTO_INCREMENT for table `series_to_actor`
+--
+ALTER TABLE `series_to_actor`
+MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+--
+-- AUTO_INCREMENT for table `series_to_episode`
+--
+ALTER TABLE `series_to_episode`
+MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+--
+-- AUTO_INCREMENT for table `throttle`
+--
+ALTER TABLE `throttle`
+MODIFY `id` int(10) unsigned NOT NULL AUTO_INCREMENT;
+--
+-- AUTO_INCREMENT for table `user`
+--
+ALTER TABLE `user`
+MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+--
+-- AUTO_INCREMENT for table `user_to_series`
+--
+ALTER TABLE `user_to_series`
+MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+--
+-- AUTO_INCREMENT for table `user_to_user`
+--
+ALTER TABLE `user_to_user`
+MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+--
+-- AUTO_INCREMENT for table `users`
+--
+ALTER TABLE `users`
+MODIFY `id` int(10) unsigned NOT NULL AUTO_INCREMENT;
+--
+-- AUTO_INCREMENT for table `users_groups`
+--
+ALTER TABLE `users_groups`
+MODIFY `id` int(10) unsigned NOT NULL AUTO_INCREMENT;
+--
+-- Constraints for dumped tables
+--
+
+--
+-- Constraints for table `genre_to_series`
+--
+ALTER TABLE `genre_to_series`
+ADD CONSTRAINT `genre_to_series_id` FOREIGN KEY (`genre_id`) REFERENCES `genre` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+ADD CONSTRAINT `series_to_genre_id` FOREIGN KEY (`series_id`) REFERENCES `series` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
+
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
