@@ -1,0 +1,39 @@
+<ng-include src="'views/nav.html'"></ng-include>
+<div class="jumbotron">
+  <h1>TV Pub</h1>
+  <p class="lead">
+    <img src="images/yeoman.png" alt="I'm Yeoman"><br>
+    Always a pleasure scaffolding your apps.
+  </p>
+  <form role="search">
+        <div class="form-group">
+            <input type="text" class="form-control" placeholder="">
+        </div>
+            <button type="search" class="btn btn-default">Search</button>
+        </form>
+</div>
+
+<div class="row marketing">
+
+  <div ng-repeat="tvshow in searchResults">
+    <p ng-if="tvshow.loading">Loading...</p>
+    <div class="col-sm-6 col-md-4">
+      <div class="thumbnail">
+        <img src="images/yeoman.png" alt="...">
+        <div class="caption">
+          <h4 ng-if="tvshow.name">{{tvshow.name}}</h4>
+          <p ng-if="tvshow.description">{{tvshow.description}}</p>
+          <p><a href="#" class="btn btn-default" role="button">...</a></p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div ng-if="error" class="alert alert-danger">
+    <strong>{{error.statusText}}</strong>
+    <hr>
+    <p>{{error.description}}</p>
+  </div>
+
+</div>

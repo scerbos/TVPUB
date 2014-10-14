@@ -1,0 +1,94 @@
+<ng-include src="'views/nav.html'"></ng-include>
+<div class="row">
+
+    <!-- <div class="col-md-9"> -->
+        <div class="row marketing">
+            <div class="col-md-4">
+                <img src="images/yeoman.png" alt="..." class="img-thumbnail">
+            </div>
+        <div class="col-md-8">
+            <h3>Welcome, username!</h3>
+        </div>
+        
+        </div>
+
+        <div class="row marketing">
+             <h4>Up This Week</h4>
+            <div class="col-md-1"></div>
+            <div class="col-md-1">
+                Mon
+            </div>
+            <div class="col-md-1">
+                Tues
+            </div>
+            <div class="col-md-1">
+                Wed
+            </div>
+            <div class="col-md-1">
+                Thurs
+            </div>
+            <div class="col-md-1">
+                Fri
+            </div>
+            <div class="col-md-1">
+                Sat
+            </div>
+            <div class="col-md-1">
+                Sun
+            </div>
+        </div>
+
+        <div class="row marketing">
+            <h4>Recently Watched</h4>
+        
+            <div ng-repeat="tvshow in recentlyWatched">
+                <p ng-if="tvshow.loading">Loading...</p>
+                <div class="col-md-3">
+                    <div class="thumbnail">
+                        <img src="images/yeoman.png" alt="...">
+                        <div class="caption">
+                            <h5 ng-if="tvshow.name">{{tvshow.name}}</h5>
+                            <p ng-if="tvshow.description">{{tvshow.description}}</p>
+                            <p><a href="#" class="btn btn-primary" role="button">+</a> <a href="#" class="btn btn-default" role="button">...</a></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- <div class="row marketing">
+            <h4>Recently Watched by Friends</h4>
+
+            <div ng-repeat="tvshow in friendsRecentlyWatched">
+                <p ng-if="tvshow.loading">Loading...</p>
+                <div class="col-md-3">
+                    <div class="thumbnail">
+                        <img src="images/yeoman.png" alt="...">
+                        <div class="caption">
+                            <h5 ng-if="tvshow.name">{{tvshow.name}}</h5>
+                            <p ng-if="tvshow.description">{{tvshow.description}}</p>
+                            <p><a href="#" class="btn btn-primary" role="button">+</a> <a href="#" class="btn btn-default" role="button">...</a></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div> -->
+    </div>
+
+    <!-- <div class="col-md-3">
+        <h5>Messages</h5>
+        <ul class="list-group">
+            <div ng-repeat="message in messages">
+                <p ng-if="message.loading">Loading...</p>
+                <li class="list-group-item">
+                    <p ng-if="message.sender" ng-if"message.subject"><b>{{message.sender}}</b> {{message.subject}}</p>
+                </li>
+            </div>
+        </ul>
+    </div> -->
+</div>
+
+
+
+
+

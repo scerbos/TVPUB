@@ -1,0 +1,41 @@
+<ng-include src="'views/nav.html'"></ng-include>
+
+<div class="row marketing">
+    <div class="col-md-4">
+        <img src="images/yeoman.png" alt="...">
+    </div>
+    <div class="col-md-8">
+        <h2>Parks & Recreation</h2>
+        <p ng-if="tvshow.description">{{tvshow.description}}</p>
+        <h4>Actors:</h4> 
+        <div ng-repeat="actor in actors">
+            <p ng-if="actor.loading">Loading...</p>
+            <ng-if="actor.name">{{actor.name}}
+        </div>
+        <h4>Status:</h4>
+        <p>ON AIR</p>
+    </div>
+</div>
+
+<div ng-repeat="season in seasons" class="row marketing">
+    <h3 ng-if="season.number">Season {{season.number}}</h3>
+        <!-- Table -->
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Ep. #</th>
+                    <th>Name</th>
+                    <th>Description</th>
+                    <th>Watched</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr ng-repeat="episode in episodes">
+                    <td ng-if="episode.number">{{episode.number}}</td>
+                    <td ng-if="episode.name">{{episode.name}}</td>
+                    <td ng-if="episode.description">{{episode.description}}</td>
+                    <td><input type="checkbox"></td>
+                </tr>
+            </tbody>
+        </table>
+</div>
