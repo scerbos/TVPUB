@@ -4,6 +4,8 @@ namespace Api;
 
 use Api\Model\Features;
 use \Slim\Slim;
+use Illuminate\Database\Capsule\Manager as Capsule;
+use Cartalyst\Sentry\Facades\Native\Sentry as Sentry;
 use \Exception;
 
 // TODO Move all "features" things to a class with index() and get() methods
@@ -16,6 +18,20 @@ class Application extends Slim
 
     protected function initConfig()
     {
+
+        // Create a new Database connection
+        $capsule = new Capsule;
+
+        $capsule->addConnection([
+            'driver'    => 'mysql',
+            'host'      => 'localhost',
+            'database'  => 'employees',
+            'username'  => 'employees',
+            'password'  => 'employees'
+        ]);
+
+        $capsule->bootEloquent();
+
         $config = array();
         if (!file_exists($this->configDirectory) || !is_dir($this->configDirectory)) {
             throw new Exception('Config directory is missing: ' . $this->configDirectory, 500);
