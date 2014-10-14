@@ -39,26 +39,17 @@ angular.module('tvpubApp')
     ];
     $scope.hasActors = true;
 
-    $scope.seasons =
-    [
-      {
-        "number": "1"
-      },
-      {
-        "number": "2"
-      }
-    ];
-    $scope.hasSeasons = true;
-
     $scope.episodes =
     [
       {
         "number": "1",
+        "season_number": "1",
         "name": "name1",
         "description": "description1"
       },
       {
         "number": "2",
+        "season_number": "2",
         "name": "name2",
         "description": "description2"
       }

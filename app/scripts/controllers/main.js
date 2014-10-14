@@ -22,27 +22,33 @@ angular.module('tvpubApp')
     [
       {
         "name": "show1",
-        "description": "blah1"
+        "description": "blah1",
+        "image": "images/animated-television.gif"
       },
       {
         "name": "show2",
-        "description": "blah2"
+        "description": "blah2",
+        "image": "images/animated-television.gif"
       },
       {
         "name": "show3",
-        "description": "blah3"
+        "description": "blah3",
+        "image": "images/animated-television.gif"
       },
       {
         "name": "show4",
-        "description": "blah4"
+        "description": "blah4",
+        "image": "images/animated-television.gif"
       },
       {
         "name": "show5",
-        "description": "blah5"
+        "description": "blah5",
+        "image": "images/animated-television.gif"
       },
       {
         "name": "show6",
-        "description": "blah6"
+        "description": "blah6",
+        "image": "images/animated-television.gif"
       }
     ];
     $scope.searched = true;

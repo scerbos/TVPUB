@@ -17,13 +17,13 @@
     </div>
 </div>
 
-<div ng-repeat="season in seasons" class="row marketing">
-    <h3 ng-if="season.number">Season {{season.number}}</h3>
+<!-- <div ng-repeat="season in seasons" class="row marketing"> -->
         <!-- Table -->
         <table class="table">
             <thead>
                 <tr>
-                    <th>Ep. #</th>
+                    <th>Season #</th>
+                    <th>Episode #</th>
                     <th>Name</th>
                     <th>Description</th>
                     <th>Watched</th>
@@ -31,6 +31,7 @@
             </thead>
             <tbody>
                 <tr ng-repeat="episode in episodes">
+                    <td ng-if="episode.season_number">{{episode.season_number}}</td>
                     <td ng-if="episode.number">{{episode.number}}</td>
                     <td ng-if="episode.name">{{episode.name}}</td>
                     <td ng-if="episode.description">{{episode.description}}</td>
@@ -38,4 +39,4 @@
                 </tr>
             </tbody>
         </table>
-</div>
+<!-- </div> -->

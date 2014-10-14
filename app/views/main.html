@@ -2,15 +2,16 @@
 <div class="jumbotron">
   <h1>TV Pub</h1>
   <p class="lead">
-    <img src="images/yeoman.png" alt="I'm Yeoman"><br>
-    Always a pleasure scaffolding your apps.
+    <img src="images/blueTV.png" width="35%" height="35%" alt="I'm Yeoman"><br>
+    Find new shows and keep track of favorites!
   </p>
   <form role="search">
-        <div class="form-group">
-            <input type="text" class="form-control" placeholder="">
-        </div>
-            <button type="search" class="btn btn-default">Search</button>
-        </form>
+    <div class="form-group">
+        <input type="text" class="form-control" placeholder="">
+    </div>
+        <button type="search" class="btn btn-default">Search</button>
+  </form>
+  <p><a href="">View All</a></p>
 </div>
 
 <div class="row marketing">
@@ -19,7 +20,7 @@
     <p ng-if="tvshow.loading">Loading...</p>
     <div class="col-sm-6 col-md-4">
       <div class="thumbnail">
-        <img src="images/yeoman.png" alt="...">
+        <img src="{{tvshow.image}}" alt="...">
         <div class="caption">
           <h4 ng-if="tvshow.name">{{tvshow.name}}</h4>
           <p ng-if="tvshow.description">{{tvshow.description}}</p>
