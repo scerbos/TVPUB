@@ -1,1 +1,45 @@
-<p>This is the about view.</p>
+<div id="main">
+    <!-- The navigation menu will get the value of the "active" variable as a class.
+         The $event.preventDefault() stops the page from jumping when a link is clicked. -->
+    
+    <nav class="{{active}} navbar navbar-default" role="navigation" ng-click="$event.preventDefault()">
+        <div class="container-fluid">
+            <ul class="nav navbar-nav">
+        
+            <!-- When a link in the menu is clicked, we set the active variable -->
+
+                <li><a href="#" class="home" ng-click="active='home'">Home</a></li>
+                <li><a href="#" class="projects" ng-click="active='projects'">Projects</a></li>
+                <li><a href="#" class="services" ng-click="active='services'">Services</a></li>
+                <li><a href="#" class="contact" ng-click="active='contact'">Contact</a></li>
+            </ul>
+            
+        </div>
+    </nav>
+
+    <!-- ng-show will show an element if the value in the quotes is truthful,
+         while ng-hide does the opposite. Because the active variable is not set
+         initially, this will cause the first paragraph to be visible. -->
+
+    <p ng-hide="active">Please click a menu item</p>
+    <p ng-show="active">You chose <b>{{active}}</b></p>
+</div>
+
+<div class="jumbotron">
+    <div class="container">
+        
+        <h1>TV Pub</h1>
+        <form role="search">
+        <div class="form-group">
+            <input type="text" class="form-control" placeholder="">
+        </div>
+            <button type="search" class="btn btn-default">Search</button>
+        </form>
+    </div>
+</div>
+
+<div>
+    <div>N results found</div>
+    <div>repeat icons of shows</div>
+</div>
+

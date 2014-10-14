@@ -70,27 +70,35 @@
           </button>
 
         </div>
+
+<ng-include src="'views/nav.html'"></ng-include>
+<div class="jumbotron">
+  <h1>TV Pub</h1>
+  <p class="lead">
+    <img src="images/blueTV.png" width="35%" height="35%" alt="I'm Yeoman"><br>
+    Find new shows and keep track of favorites!
+  </p>
+  <form role="search">
+    <div class="form-group">
+        <input type="text" class="form-control" placeholder="">
+    </div>
+        <button type="search" class="btn btn-default">Search</button>
+  </form>
+  <p><a href="">View All</a></p>
 </div>
 
 <div class="row marketing">
-
-  <p ng-if="loading">Loading...</p>
-
-  <div ng-repeat="thing in awesomeThings">
-    <h4>{{thing.name}}</h4>
-    <p ng-if="thing.desc">{{thing.desc}}</p>
-    <p ng-if="thing.loading">Loading...</p>
-    <div ng-if="thing.error" class="alert alert-danger">
-      <strong>{{thing.error.statusText}}</strong>
-      <hr>
-      <p>{{thing.error.description}}</p>
+  <div ng-repeat="tvshow in searchResults">
+    <p ng-if="tvshow.loading">Loading...</p>
+    <div class="col-sm-6 col-md-4">
+      <div class="thumbnail">
+        <img src="{{tvshow.image}}" alt="...">
+        <div class="caption">
+          <h4 ng-if="tvshow.name">{{tvshow.name}}</h4>
+          <p ng-if="tvshow.description">{{tvshow.description}}</p>
+          <p><a href="#" class="btn btn-default" role="button">...</a></p>
+        </div>
+      </div>
     </div>
   </div>
-
-  <div ng-if="error" class="alert alert-danger">
-    <strong>{{error.statusText}}</strong>
-    <hr>
-    <p>{{error.description}}</p>
-  </div>
-
 </div>

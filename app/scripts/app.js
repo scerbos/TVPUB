@@ -25,8 +25,15 @@ angular
       })
       .when('/about', {
         templateUrl: 'views/about.html',
-        controller: 'AboutCtrl',
-        authenticate: true
+        controller: 'AboutCtrl'
+      })
+      .when('/home', {
+        templateUrl: 'views/home.html',
+        controller: 'HomeCtrl'
+      })
+      .when('/viewShow', {
+        templateUrl: 'views/viewshow.html',
+        controller: 'ViewshowCtrl'
       })
       .otherwise({
         redirectTo: '/'
