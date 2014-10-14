@@ -8,44 +8,26 @@
  * Controller of the tvpubApp
  */
 angular.module('tvpubApp')
-  .controller('LoginCtrl', function ($scope, $http) {
+  .controller('LoginCtrl', function ($scope, Auth, $location) {
+    $scope.errors = {};
+    $scope.user = {};
 
-    function createUnknownError(status) {
-      return {
-        status: status,
-        statusText: 'Internal Server Error',
-        description: 'No details available'
-      };
-    }
+    $scope.login = function(form) {
+      $scope.submitted = true;
 
-    $scope.awesomeThings = [];
-    $scope.loading = true;
-
-    // Get awesome things list
-    $http({method: 'GET', url: '/api/features'}).
-
-      success(function (data) {
-        $scope.loading = false;
-        $scope.awesomeThings = data;
-
-        // Get description of each thing
-        $scope.awesomeThings.forEach(function (thing) {
-          thing.loading = true;
-
-          $http({method: 'GET', url: thing.href}).
-            success(function (data) {
-              thing.loading = false;
-              thing.description = data.description;
-            }).
-            error(function (data, status) {
-              thing.loading = false;
-              thing.error = data && data.description ? data : createUnknownError(status);
-            });
+      if(form.$valid) {
+        Auth.login({
+          email: $scope.user.email,
+          password: $scope.user.password
+        })
+        .then( function() {
+          // Logged in, redirect to home
+          $location.path('/');
+        })
+        .catch( function(err) {
+          $scope.errors.other = err.message;
         });
-      }).
-
-      error(function (data, status) {
-        $scope.loading = false;
-        $scope.error = data && data.description ? data : createUnknownError(status);
-      });
+      }
+    };
+   
   });

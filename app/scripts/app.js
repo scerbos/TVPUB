@@ -53,7 +53,7 @@ angular
 
       Auth.isLoggedInAsync(function(loggedIn) {
         if (next.authenticate && !loggedIn) {
-          $location.path('/');
+          $location.path('/login');
         }
       });
     });

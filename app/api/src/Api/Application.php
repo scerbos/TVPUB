@@ -156,6 +156,7 @@ class Application extends Slim
             try {
                 // Create the user
                 $user = Sentry::createUser(array(
+                    'first_name'=> $data->{'name'},
                     'email'     => $data->{'email'},
                     'password'  => $data->{'password'},
                     'activated' => true,
