@@ -9,7 +9,7 @@
  */
 angular.module('tvpubApp')
   .factory('User', function ($resource) {
-    return $resource('/api/users/:id/:controller', {
+    return $resource('api/users/:id/:controller', {
       id: '@_id'
     },
     {

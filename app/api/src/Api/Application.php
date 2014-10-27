@@ -2,13 +2,11 @@
 
 namespace Api;
 
-use Api\Model\Features;
 use \Slim\Slim;
 use Illuminate\Database\Capsule\Manager as Capsule;
 use Cartalyst\Sentry\Facades\Native\Sentry as Sentry;
 use \Exception;
 
-// TODO Move all "features" things to a class with index() and get() methods
 class Application extends Slim
 {
     public $configDirectory;
@@ -25,9 +23,9 @@ class Application extends Slim
         $capsule->addConnection([
             'driver'    => 'mysql',
             'host'      => 'localhost',
-            'database'  => 'employees',
-            'username'  => 'employees',
-            'password'  => 'employees',
+            'database'  => 'tvpub',
+            'username'  => 'tvpub',
+            'password'  => 'tvpub',
             'charset'   => 'utf8',
             'collation' => 'utf8_unicode_ci',
         ]);
@@ -46,9 +44,9 @@ class Application extends Slim
 
     protected function dbConnect()
     {
-        $dbData = $this->config['dbData'];
+        // $dbData = $this->config['dbData'];
 
-        $this->dbConn = mysqli_connect($dbData['host'], $dbData['username'], $dbData['password'], $dbData['database']);
+        $this->dbConn = mysqli_connect('localhost', 'tvpub', 'tvpub', 'tvpub');
 
         if ($this->dbConn->connect_error) {
             die('Error : ('. $this->dbConn->connect_errno .') '. $this->dbConn->connect_error);
@@ -149,8 +147,12 @@ class Application extends Slim
         $this->configDirectory = __DIR__ . '/../../' . $configDirectory;
         $this->config = $this->initConfig();
 
+        $this->get('/', function () {
+            echo "Hello!";
+        });
+
         // /users
-        $this->post('/api/users', function () {
+        $this->post('/user', function () {
             $data = json_decode($this->request->getBody());
 
             try {
@@ -178,7 +180,7 @@ class Application extends Slim
             $this->response->setBody($res);
         });
 
-        $this->get('/api/users/me', function () {
+        $this->get('/user/me', function () {
             if (! Sentry::check()) {
                 $this->response->setStatus(401);
             } else {
@@ -188,7 +190,7 @@ class Application extends Slim
         });
 
         // /auth
-        $this->post('/api/auth/login', function () {
+        $this->post('/auth/login', function () {
             $data = json_decode($this->request->getBody());
 
             try {
@@ -217,7 +219,7 @@ class Application extends Slim
             $this->response->setBody($res);
         });
 
-        $this->post('/api/auth/logout', function () {
+        $this->post('/auth/logout', function () {
             Sentry::logout();
 
             $this->response->headers->set('Content-Type', 'application/json');
@@ -225,16 +227,38 @@ class Application extends Slim
         });
 
         // /series
-        $this->get('/api/user/:id/shows', function () {
+        $this->get('/user/:uid/series', function ($uid) {
             $this->dbConnect();
-            $shows = $this->dbSelect("SELECT * FROM Series s WHERE NOT EXISTS (SELECT * FROM Users u WHERE NOT EXISTS (SELECT * FROM user_to_series us WHERE us.user_id = u.id AND us.series_id = s.id))", true);
+            $uid = mysqli_real_escape_string($this->dbConn, $uid);
+            $shows = $this->dbSelect("SELECT * FROM Series s WHERE EXISTS (SELECT * FROM user_to_series us WHERE us.user_id = '$uid' AND us.series_id = s.id)", true);
 
             $this->response->headers->set('Content-Type', 'application/json');
             $this->response->setBody($shows);
             $this->dbClose();
         });
 
-        $this->get('/api/series', function () {
+        $this->post('/user/series/', function () {
+            $this->dbConnect();
+            $body = $this->request->getBody();
+            $addedSeries = $this->dbInsert("user_to_series", $body);
+
+            $this->response->headers->set('Content-Type', 'application/json');
+            $this->response->setBody($addedSeries);
+            $this->dbClose();
+        });
+
+        $this->delete('/user/:uid/series/:sid', function ($uid, $sid) {
+            $this->dbConnect();
+            $uid = mysqli_real_escape_string($this->dbConn, $uid);
+            $sid = mysqli_real_escape_string($this->dbConn, $sid);
+            $deletedSeries = $this->dbDelete("user_to_series", "user_id = '$uid' AND series_id = '$sid'");
+
+            $this->response->headers->set('Content-Type', 'application/json');
+            $this->response->setBody($deletedSeries);
+            $this->dbClose();
+        });
+
+        $this->get('/series', function () {
             $this->dbConnect();
             $shows = $this->dbSelect("SELECT * from series", true);
 
@@ -243,17 +267,17 @@ class Application extends Slim
             $this->dbClose();
         });
 
-        $this->get('/api/series/:id', function ($id) {
+        $this->get('/series/:sid', function ($sid) {
             $this->dbConnect();
-            $id = mysqli_real_escape_string($this->dbConn, $id);
-            $shows = $this->dbSelect("SELECT * from series WHERE id = '$id'", true);
+            $sid = mysqli_real_escape_string($this->dbConn, $sid);
+            $shows = $this->dbSelect("SELECT * from series WHERE id = '$sid'", true);
 
             $this->response->headers->set('Content-Type', 'application/json');
             $this->response->setBody($shows);
             $this->dbClose();
         });
 
-        $this->post('/api/employees', function () {
+        $this->post('/employees', function () {
             $this->dbConnect();
             $body = $this->request->getBody();
             $newEmployee = $this->dbInsert("employee", $body);
@@ -263,7 +287,7 @@ class Application extends Slim
             $this->dbClose();
         });
 
-        $this->put('/api/employees/:id', function ($id) {
+        $this->put('/employees/:id', function ($id) {
             $this->dbConnect();
             $body = $this->request->getBody();
             $id = mysqli_real_escape_string($this->dbConn, $id);
@@ -274,7 +298,7 @@ class Application extends Slim
             $this->dbClose();
         });
 
-        $this->delete('/api/employees/:id', function ($id) {
+        $this->delete('/employees/:id', function ($id) {
             $this->dbConnect();
             $id = mysqli_real_escape_string($this->dbConn, $id);
             $deletedEmployee = $this->dbDelete("employee", "id_employee = '$id'");

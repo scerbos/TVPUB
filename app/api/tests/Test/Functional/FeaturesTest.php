@@ -26,10 +26,7 @@ class FeaturesTest extends \PHPUnit_Framework_TestCase
             $expected[] = array(
                 'id' => $id,
                 'name' => $feature['name'],
-<<<<<<< HEAD
                 'desc' => $feature['description'],
-=======
->>>>>>> feature/views
                 'href' => './api/features/' . $id,
             );
         }
